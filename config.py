@@ -1,9 +1,7 @@
 from argparse import Namespace
 
 class KeyscoreConfig():
-    _config = {
-        "depth": 5
-    }
+    _config = {}
 
     def get(key: str, default = None):
         return KeyscoreConfig._config[key] if key in KeyscoreConfig._config else default
