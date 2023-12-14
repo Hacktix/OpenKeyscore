@@ -11,8 +11,8 @@ if __name__ == "__main__":
         prog=_PROG_NAME,
         description="A modular information gathering tool with support for many sources of OSINT."
     )
-    parser.add_argument("ksdfile")
-    parser.add_argument("-d", "--depth")
+    parser.add_argument("ksdfile", help="Path to .ksd file containing the initial set of information nodes")
+    parser.add_argument("-d", "--depth", help="Maximum depth of nodes to analyze before stopping", type=int, default=5)
 
     args = parser.parse_args()
     KeyscoreConfig._load_config_from_args(args)
