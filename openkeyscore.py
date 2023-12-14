@@ -1,4 +1,26 @@
 #!/usr/bin/python3
+import os
+import argparse
+from config import KeyscoreConfig
+from session import KeyscoreSession
+
+_PROG_NAME = "OpenKeyscore"
 
 if __name__ == "__main__":
-    pass
+    parser = argparse.ArgumentParser(
+        prog=_PROG_NAME,
+        description="A modular information gathering tool with support for many sources of OSINT."
+    )
+    parser.add_argument("ksdfile")
+    parser.add_argument("-d", "--depth")
+
+    args = parser.parse_args()
+    KeyscoreConfig._load_config_from_args(args)
+
+    ksdpath = args.ksdfile
+    if not os.path.exists(ksdpath) or not os.path.isfile(ksdpath):
+        parser.print_usage()
+        print(f"{_PROG_NAME}: error: Cannot find file specified: {ksdpath}")
+
+    session = KeyscoreSession.from_ksd(ksdpath)
+    # TODO: Actually do something with the session
