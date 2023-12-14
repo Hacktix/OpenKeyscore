@@ -1,5 +1,6 @@
 #!/usr/bin/python3
 import os
+import sys
 import argparse
 from config import KeyscoreConfig
 from session import KeyscoreSession
@@ -17,10 +18,15 @@ if __name__ == "__main__":
     args = parser.parse_args()
     KeyscoreConfig._load_config_from_args(args)
 
-    ksdpath = args.ksdfile
-    if not os.path.exists(ksdpath) or not os.path.isfile(ksdpath):
-        parser.print_usage()
-        print(f"{_PROG_NAME}: error: Cannot find file specified: {ksdpath}")
+    try:
+        ksdpath = args.ksdfile
+        if not os.path.exists(ksdpath) or not os.path.isfile(ksdpath):
+            parser.print_usage()
+            print(f"{_PROG_NAME}: error: Cannot find file specified: {ksdpath}")
+            sys.exit(1)
+        session = KeyscoreSession.from_ksd(ksdpath)
+    except Exception as e:
+        print(f"{_PROG_NAME}: error: {e}")
+        sys.exit(1)
 
-    session = KeyscoreSession.from_ksd(ksdpath)
     # TODO: Actually do something with the session
