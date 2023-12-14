@@ -4,7 +4,7 @@ import argparse
 from config import KeyscoreConfig
 from session import KeyscoreSession
 
-_PROG_NAME = "OpenKeyscore"
+_PROG_NAME = "openkeyscore"
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
