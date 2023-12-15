@@ -40,7 +40,7 @@ class KeyscoreSession():
             processors = KeyscoreSession._processor_consume_map[type(process_node)]
             for pclass in processors:
                 processor: ProcessorBase = pclass(process_node)
-                new_nodes = processor.process()
+                new_nodes = processor.process() or []
                 for new_node in new_nodes:
                     if self.should_add_node(new_node) and not process_node.equals(new_node):
                         new_node.parent = process_node
@@ -59,13 +59,17 @@ class KeyscoreSession():
 
 
 
-
-all_node_members = inspect.getmembers(sys.modules["nodes"])
-for ncl in all_node_members:
-    if not inspect.isclass(ncl[1]) or ncl[1] is NodeBase:
-        continue
-    if issubclass(ncl[1], NodeBase):
-        KeyscoreSession._nodeclass_map[ncl[0]] = ncl[1]
+modules = list(sys.modules.values())
+for module in modules:
+    try:
+        all_node_members = inspect.getmembers(module)
+        for ncl in all_node_members:
+            if not inspect.isclass(ncl[1]) or ncl[1] is NodeBase:
+                continue
+            if issubclass(ncl[1], NodeBase):
+                KeyscoreSession._nodeclass_map[ncl[0]] = ncl[1]
+    except:
+        pass
 
 all_processor_members = inspect.getmembers(sys.modules["processors"])
 for pm in all_processor_members:
