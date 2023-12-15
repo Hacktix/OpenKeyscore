@@ -42,11 +42,20 @@ class KeyscoreSession():
                 processor: ProcessorBase = pclass(process_node)
                 new_nodes = processor.process()
                 for new_node in new_nodes:
-                    new_node.parent = process_node
-                self.queued = self.queued + new_nodes
-
+                    if self.should_add_node(new_node) and not process_node.equals(new_node):
+                        new_node.parent = process_node
+                        self.queued.append(new_node)
             self.processed.append(process_node)
         return self.processed
+    
+    def should_add_node(self, node: NodeBase):
+        for processed in self.processed:
+            if node.equals(processed):
+                return False
+        for queued in self.queued:
+            if node.equals(queued):
+                return False
+        return True
 
 
 
