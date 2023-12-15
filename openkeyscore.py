@@ -30,6 +30,6 @@ if __name__ == "__main__":
         sys.exit(1)
 
     processed_nodes = session.process()
-    print(f"Found {len(processed_nodes)} nodes total:")
+    print(f"\nFound {len(processed_nodes)} nodes total:")
     for node in processed_nodes:
-        print(f"\t{node.__class__.__name__}:{node}")
+        print(f"\n  {node.__class__.__name__}:\n    {node}")
