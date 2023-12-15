@@ -37,6 +37,10 @@ class KeyscoreSession():
                 self.processed.append(process_node)
                 continue
 
+            if type(process_node) not in KeyscoreSession._processor_consume_map:
+                self.processed.append(process_node)
+                continue
+            
             processors = KeyscoreSession._processor_consume_map[type(process_node)]
             for pclass in processors:
                 processor: ProcessorBase = pclass(process_node)
