@@ -32,4 +32,4 @@ if __name__ == "__main__":
     processed_nodes = session.process()
     print(f"\nFound {len(processed_nodes)} nodes total:")
     for node in processed_nodes:
-        print(f"\n  {node.__class__.__name__}:\n    {node}")
+        print(f"{node.__class__.__name__.rjust(15, ' ')}: {node}")
