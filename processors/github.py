@@ -17,7 +17,7 @@ class GithubAccount(NodeBase):
         self.twitter = twitter
         self.created = created
 
-    def equals(self, other: NodeBase): return self.username.value == other.username.value if type(other) == GithubAccount else False
+    def equals(self, other: NodeBase): return self.username == other.username if type(other) == GithubAccount else False
     def __repr__(self): return f"{self.display_name} ({self.username}) : {self.url}" if self.display_name else f"{self.username} : {self.url}"
 
     @staticmethod
@@ -77,7 +77,7 @@ class GithubProcessor(ProcessorBase):
 
     def _get_queryable_username(self) -> str:
         match(self.node.__class__.__name__):
-            case "Username": return self.node.username.value
+            case "Username": return self.node.username
 
     def _send_request(path: str):
         return requests.get(f"https://api.github.com/{path}")

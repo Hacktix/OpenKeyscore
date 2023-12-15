@@ -1,5 +1,4 @@
 from abc import ABC, abstractmethod
-from fields import FieldBase, StringField
 
 class NodeBase(ABC):
     def __init__(self, parent: "NodeBase" = None) -> None:
@@ -25,10 +24,10 @@ class NodeBase(ABC):
 class Username(NodeBase):
     def __init__(self, username: str, parent: NodeBase = None) -> None:
         super().__init__(parent)
-        self.username = StringField(username)
+        self.username = username
 
-    def equals(self, other): return self.username.value == other.username.value if type(other) == Username else False
-    def __repr__(self): return self.username.value
+    def equals(self, other): return self.username == other.username if type(other) == Username else False
+    def __repr__(self): return self.username
 
     @staticmethod
     def parse(*args): return Username(args[0])
@@ -36,10 +35,10 @@ class Username(NodeBase):
 class Email(NodeBase):
     def __init__(self, email: str, parent: NodeBase = None) -> None:
         super().__init__(parent)
-        self.email = StringField(email)
+        self.email = email
 
-    def equals(self, other): return self.email.value == other.email.value if type(other) == Email else False
-    def __repr__(self): return self.email.value
+    def equals(self, other): return self.email == other.email if type(other) == Email else False
+    def __repr__(self): return self.email
 
     @staticmethod
     def parse(*args): return Email(args[0])

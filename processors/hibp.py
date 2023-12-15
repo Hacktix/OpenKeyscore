@@ -40,7 +40,7 @@ class HIBPProcessor(ProcessorBase):
     
     def _get_queryable_username(self) -> str:
         match(self.node.__class__.__name__):
-            case "Email": return self.node.email.value
+            case "Email": return self.node.email
 
     def _send_request(path: str):
         headers = {"hibp-api-key": KeyscoreConfig.get("hibp_api_key")}
