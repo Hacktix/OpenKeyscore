@@ -40,14 +40,15 @@ class KeyscoreSession():
             if type(process_node) not in KeyscoreSession._processor_consume_map:
                 self.processed.append(process_node)
                 continue
-            
+
             processors = KeyscoreSession._processor_consume_map[type(process_node)]
             for pclass in processors:
                 processor: ProcessorBase = pclass(process_node)
                 new_nodes = processor.process() or []
                 for new_node in new_nodes:
                     if self.should_add_node(new_node) and not process_node.equals(new_node):
-                        new_node.parent = process_node
+                        if new_node.parent is None:
+                            new_node.parent = process_node
                         self.queued.append(new_node)
             self.processed.append(process_node)
         return self.processed
