@@ -29,4 +29,7 @@ if __name__ == "__main__":
         print(f"{_PROG_NAME}: error: {e}")
         sys.exit(1)
 
-    # TODO: Actually do something with the session
+    processed_nodes = session.process()
+    print(f"Found {len(processed_nodes)} nodes total:")
+    for node in processed_nodes:
+        print(f"\t{node.__class__.__name__}:{node}")
