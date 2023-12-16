@@ -6,6 +6,7 @@ from nodes import NodeBase, Website
 from processor import ProcessorBase
 from cryptography import x509
 from cryptography.x509.oid import ExtensionOID
+from services.DomainUtil import is_excluded_domain
 import ssl
 
 class SSLCertProcessor(ProcessorBase):
@@ -13,7 +14,11 @@ class SSLCertProcessor(ProcessorBase):
 
     def process(self) -> list[NodeBase]:
         nodes = []
-        certpem = ssl.get_server_certificate((self._get_domain(), 443))
+        domain = self._get_domain()
+        if is_excluded_domain(domain):
+            return []
+
+        certpem = ssl.get_server_certificate((domain, 443))
         cert = x509.load_pem_x509_certificate(certpem.encode("utf-8"))
 
         alt_names = cert.extensions.get_extension_for_oid(ExtensionOID.SUBJECT_ALTERNATIVE_NAME).value.get_values_for_type(x509.DNSName)
