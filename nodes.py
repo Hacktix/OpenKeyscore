@@ -32,6 +32,17 @@ class Username(NodeBase):
     @staticmethod
     def parse(*args): return Username(args[0])
 
+class RealName(NodeBase):
+    def __init__(self, name: str, parent: NodeBase = None) -> None:
+        super().__init__(parent)
+        self.name = name
+
+    def equals(self, other): return self.name == other.name if type(other) == RealName else False
+    def __repr__(self): return self.name
+
+    @staticmethod
+    def parse(*args): return RealName(args[0])
+
 class Email(NodeBase):
     def __init__(self, email: str, parent: NodeBase = None) -> None:
         super().__init__(parent)

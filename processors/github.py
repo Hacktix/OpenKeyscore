@@ -1,4 +1,4 @@
-from nodes import Email, NodeBase, Username, Website
+from nodes import Email, NodeBase, RealName, Username, Website
 from processor import ProcessorBase
 import requests
 
@@ -44,6 +44,7 @@ class GithubProcessor(ProcessorBase):
 
         if user.email: nodes.append(Email(user.email, user))
         if user.website: nodes.append(Website(user.website, user))
+        if user.display_name and " " in user.display_name: nodes.append(RealName(user.display_name, user))
 
         events_responses = GithubProcessor._send_request(f"users/{user.username}/events")
         events_responses.raise_for_status()
@@ -69,9 +70,10 @@ class GithubProcessor(ProcessorBase):
             nodes.append(email_node)
         for username in commit_usernames:
             if " " in username:
-                continue
-            username_node = Username(username, user)
-            nodes.append(username_node)
+                name_node = RealName(username, user)
+            else:
+                name_node = Username(username, user)
+            nodes.append(name_node)
         
         return nodes
 
