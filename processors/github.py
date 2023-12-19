@@ -83,3 +83,20 @@ class GithubProcessor(ProcessorBase):
 
     def _send_request(path: str):
         return requests.get(f"https://api.github.com/{path}")
+    
+class GithubRepoProcessor(ProcessorBase):
+    consumed_nodetypes = [GithubAccount]
+    def process(self):
+        username = self.node.username
+        repo_res = GithubProcessor._send_request(f"users/{username}/repos")
+        if repo_res.status_code != 200:
+            return []
+        repos = repo_res.json()
+
+        nodes = []
+        for repo in repos:
+            if repo["fork"]:
+                continue
+            if repo["homepage"] and "github." not in repo["homepage"] and "githubusercontent." not in repo["homepage"]:
+                nodes.append(Website(repo["homepage"]))
+        return nodes
