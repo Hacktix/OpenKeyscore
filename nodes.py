@@ -21,6 +21,17 @@ class NodeBase(ABC):
     def __repr__(self):
         pass
 
+class GenericText(NodeBase):
+    def __init__(self, text: str, parent: NodeBase = None) -> None:
+        super().__init__(parent)
+        self.text = text
+
+    def equals(self, other) -> bool: return self.text == other.text if type(other) == GenericText else False
+    def __repr__(self): return self.text
+
+    @staticmethod
+    def parse(*args): return GenericText(args[0])
+
 class Username(NodeBase):
     def __init__(self, username: str, parent: NodeBase = None) -> None:
         super().__init__(parent)
