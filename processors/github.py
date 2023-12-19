@@ -37,14 +37,36 @@ class GithubProcessor(ProcessorBase):
             username=user["login"], avatar=user["avatar_url"], url=user["html_url"], display_name=user["name"], company=user["company"],
             website=user["blog"], location=user["location"], email=user["email"], bio=user["bio"], twitter=user["twitter_username"], created=user["created_at"]
         )
-        return [user_node] + self._get_nodes_from_user(user_node)
+        return [user_node]
+
+    def _get_queryable_username(self) -> str:
+        match(self.node.__class__.__name__):
+            case "Username": return self.node.username
+
+    def _send_request(path: str):
+        return requests.get(f"https://api.github.com/{path}")
     
-    def _get_nodes_from_user(self, user: GithubAccount) -> list[NodeBase]:
+
+
+class GithubUserProcessor(ProcessorBase):
+    consumed_nodetypes = [GithubAccount]
+    def process(self):
+        user = self.node
         nodes = []
 
         if user.email: nodes.append(Email(user.email, user))
         if user.website: nodes.append(Website(user.website, user))
         if user.display_name and " " in user.display_name: nodes.append(RealName(user.display_name, user))
+
+        return nodes
+    
+
+
+class GithubEventProcessor(ProcessorBase):
+    consumed_nodetypes = [GithubAccount]
+    def process(self):
+        user = self.node
+        nodes = []
 
         events_responses = GithubProcessor._send_request(f"users/{user.username}/events")
         events_responses.raise_for_status()
@@ -77,13 +99,8 @@ class GithubProcessor(ProcessorBase):
         
         return nodes
 
-    def _get_queryable_username(self) -> str:
-        match(self.node.__class__.__name__):
-            case "Username": return self.node.username
 
-    def _send_request(path: str):
-        return requests.get(f"https://api.github.com/{path}")
-    
+
 class GithubRepoProcessor(ProcessorBase):
     consumed_nodetypes = [GithubAccount]
     def process(self):
