@@ -1,6 +1,9 @@
 # Keyscore Files
 *.ksd
 
+# Output files
+*.html
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
