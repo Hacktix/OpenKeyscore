@@ -18,14 +18,17 @@ class SSLCertProcessor(ProcessorBase):
         if is_excluded_domain(domain):
             return []
 
-        certpem = ssl.get_server_certificate((domain, 443))
-        cert = x509.load_pem_x509_certificate(certpem.encode("utf-8"))
+        try:
+            certpem = ssl.get_server_certificate((domain, 443), timeout=3)
+            cert = x509.load_pem_x509_certificate(certpem.encode("utf-8"))
 
-        alt_names = cert.extensions.get_extension_for_oid(ExtensionOID.SUBJECT_ALTERNATIVE_NAME).value.get_values_for_type(x509.DNSName)
-        for name in alt_names:
-            if "*." in name:
-                continue
-            nodes.append(Website(name))
+            alt_names = cert.extensions.get_extension_for_oid(ExtensionOID.SUBJECT_ALTERNATIVE_NAME).value.get_values_for_type(x509.DNSName)
+            for name in alt_names:
+                if "*." in name:
+                    continue
+                nodes.append(Website(name))
+        except:
+            pass
 
         return nodes
     
