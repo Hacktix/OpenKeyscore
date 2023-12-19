@@ -12,7 +12,7 @@ class RedditAccount(NodeBase):
         self.created = datetime.fromtimestamp(created) if created else None
 
     def equals(self, other: NodeBase): return self.username == other.username if type(other) == RedditAccount else False
-    def __repr__(self): return f"{self.display_name} ({self.username}) : {self.url}" if self.display_name else f"{self.username} : {self.url}"
+    def __repr__(self): return f"{self.display_name} ({self.username})" if self.display_name else f"{self.username}"
 
     @staticmethod
     def parse(*args): return RedditAccount(*args)

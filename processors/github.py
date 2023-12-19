@@ -18,7 +18,7 @@ class GithubAccount(NodeBase):
         self.created = created
 
     def equals(self, other: NodeBase): return self.username == other.username if type(other) == GithubAccount else False
-    def __repr__(self): return f"{self.display_name} ({self.username}) : {self.url}" if self.display_name else f"{self.username} : {self.url}"
+    def __repr__(self): return f"{self.display_name} ({self.username})" if self.display_name else f"{self.username}"
 
     @staticmethod
     def parse(*args): return GithubAccount(*args)

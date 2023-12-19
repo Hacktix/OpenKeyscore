@@ -38,10 +38,10 @@ if __name__ == "__main__":
 
     if args.html:
         filename = args.html if args.html.endswith(".html") else f"{args.html}.html"
-        net = Network()
+        net = Network(directed=True)
         idx = 0
         for node in processed_nodes:
-            net.add_node(idx, label=node.__class__.__name__, title=f"{node}") # TODO: Figure out how to add metadata to this
+            net.add_node(idx, label=f"{node.__class__.__name__}\n{node}") # TODO: Figure out how to add metadata to this
             if node.parent is not None:
                 parent_idx = 0
                 while not node.parent.equals(processed_nodes[parent_idx]):

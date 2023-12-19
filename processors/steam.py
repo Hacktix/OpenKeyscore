@@ -18,7 +18,7 @@ class SteamAccount(NodeBase):
         self.state = state
 
     def equals(self, other: NodeBase): return self.id == other.id if type(other) == SteamAccount else False
-    def __repr__(self): return f"{self.name} ({self.display_name}) : {self.url}" if self.name else f"{self.display_name} : {self.url}"
+    def __repr__(self): return f"{self.name} ({self.display_name})" if self.name else f"{self.display_name}"
 
     @staticmethod
     def parse(*args): return SteamAccount(*args)
