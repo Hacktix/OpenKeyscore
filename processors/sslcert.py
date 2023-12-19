@@ -6,7 +6,7 @@ from nodes import NodeBase, Website
 from processor import ProcessorBase
 from cryptography import x509
 from cryptography.x509.oid import ExtensionOID
-from services.DomainUtil import is_excluded_domain
+from util.domain_util import is_excluded_domain
 import ssl
 
 class SSLCertProcessor(ProcessorBase):
