@@ -17,7 +17,6 @@ class DNSProcessor(ProcessorBase):
             try:
                 res = list(resolver.resolve(domain, query_type))
                 for entry in res:
-                    print(entry.__class__.__name__)
                     match(entry.__class__.__name__):
                         case "CNAME": nodes.append(Website(entry.target))
                         case "TXT": nodes.append(GenericText(entry.to_text()))

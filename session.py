@@ -3,6 +3,7 @@ from nodes import NodeBase
 from processor import ProcessorBase
 from processors import *
 from util.module_util import get_nodeclass_map, get_processor_consume_map
+from loguru import logger
 
 class KeyscoreSession():
 
@@ -28,6 +29,7 @@ class KeyscoreSession():
                 if nodetype not in KeyscoreSession._nodeclass_map:
                     raise Exception(f"Cannot parse node of unknown type {nodetype}")
                 nodes.append(KeyscoreSession._nodeclass_map[nodetype](*nodeargs))
+        logger.info(f"Initialized Keyscore Session with {len(nodes)} node{'s' if len(nodes) > 1 else ''}.")
         return KeyscoreSession(nodes)
     
     def process(self):
@@ -41,14 +43,17 @@ class KeyscoreSession():
                 self.processed.append(process_node)
                 continue
 
+            logger.debug(f"Processing node of type {process_node.__class__.__name__}: {process_node}")
             processors = KeyscoreSession._processor_consume_map[type(process_node)]
             for pclass in processors:
                 processor: ProcessorBase = pclass(process_node)
+                logger.debug(f"Fetching new nodes from processor {processor.__class__.__name__}")
                 new_nodes = processor.process() or []
                 for new_node in new_nodes:
                     if self.should_add_node(new_node) and not process_node.equals(new_node):
                         if new_node.parent is None:
                             new_node.parent = process_node
+                        logger.info(f"Found {new_node.__class__.__name__}: {new_node}")
                         self.queued.append(new_node)
             self.processed.append(process_node)
         return self.processed

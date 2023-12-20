@@ -5,6 +5,7 @@ import argparse
 from config import KeyscoreConfig
 from session import KeyscoreSession
 from pyvis.network import Network
+from loguru import logger
 
 _PROG_NAME = "openkeyscore"
 
@@ -16,8 +17,11 @@ if __name__ == "__main__":
     parser.add_argument("ksdfile", help="Path to .ksd file containing the initial set of information nodes")
     parser.add_argument("-d", "--depth", help="Maximum depth of nodes to analyze before stopping (default: 5)", type=int, default=5)
     parser.add_argument("--html", help="Name of the HTML output file, if one should be created", type=str)
+    parser.add_argument("-l", "--log-level", help="Minimum log level which should be output. (default: INFO)", type=str)
 
     args = parser.parse_args()
+    logger.remove()
+    logger.add(sys.stderr, level=args.log_level if args.log_level else "INFO")
     KeyscoreConfig._load_config_from_args(args)
 
     try:

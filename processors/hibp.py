@@ -2,6 +2,7 @@ from config import KeyscoreConfig
 from nodes import Email, NodeBase
 from processor import ProcessorBase
 import requests
+from loguru import logger
 
 class DataBreach(NodeBase):
     def __init__(self, name: str, parent: NodeBase = None) -> None:
@@ -23,14 +24,14 @@ class HIBPProcessor(ProcessorBase):
         if KeyscoreConfig.get("hibp_api_key") is None:
             if not HIBPProcessor._showed_no_apikey_warning:
                 HIBPProcessor._showed_no_apikey_warning = True
-                print("WARNING: hibp_api_key Environment Variable not set. HaveIBeenPwned cannot be used")
+                logger.warning("WARNING: hibp_api_key Environment Variable not set. HaveIBeenPwned cannot be used")
             return []
         
         accountname = self._get_queryable_username()
         hibp_res = HIBPProcessor._send_request(f"breachedaccount/{accountname}")
         
         if hibp_res.status_code == 401:
-            print("ERROR: Invalid hibp_api_key provided")
+            logger.error("Invalid hibp_api_key provided")
             return []
         
         if hibp_res.status_code == 200:

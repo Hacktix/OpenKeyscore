@@ -1,8 +1,9 @@
 from config import KeyscoreConfig
-from nodes import Email, NodeBase, Username, Website
+from nodes import NodeBase, Username
 from processor import ProcessorBase
 import requests
 from datetime import datetime
+from loguru import logger
 
 class SteamAccount(NodeBase):
     def __init__(self, id: str, display_name: str, url: str, avatar: str, lastonline: int, name: str, created: int, country: str, state: str, parent: NodeBase = None) -> None:
@@ -33,14 +34,14 @@ class SteamProcessor(ProcessorBase):
         if not api_key:
             if not SteamProcessor._showed_no_apikey_warning:
                 SteamProcessor._showed_no_apikey_warning = True
-                print("WARNING: steam_api_key Environment Variable not set. Steam Web API cannot be used")
+                logger.warning("WARNING: steam_api_key Environment Variable not set. Steam Web API cannot be used")
             return []
         
         username = self._get_queryable_username()
         id_lookup_res = SteamProcessor._send_request(f"ISteamUser/ResolveVanityURL/v0001/?key={api_key}&vanityurl={username}")
         
         if id_lookup_res.status_code == 403:
-            print("ERROR: Invalid steam_api_key provided")
+            logger.error("Invalid steam_api_key provided")
             return []
         
         id_res = id_lookup_res.json()["response"]
