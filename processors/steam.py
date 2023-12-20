@@ -6,6 +6,7 @@ from datetime import datetime
 from loguru import logger
 
 class SteamAccount(NodeBase):
+    _type_display_name = "Steam Account"
     def __init__(self, id: str, display_name: str, url: str, avatar: str, lastonline: int, name: str, created: int, country: str, state: str, parent: NodeBase = None) -> None:
         super().__init__(parent)
         self.id = id

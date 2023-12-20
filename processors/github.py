@@ -3,6 +3,8 @@ from processor import ProcessorBase
 import requests
 
 class GithubAccount(NodeBase):
+    _type_display_name = "GitHub Account"
+
     def __init__(self, username: str, avatar: str, url: str, display_name: str, company: str, website: str, location: str, email: str, bio: str, twitter: str, created: str, parent: NodeBase = None) -> None:
         super().__init__(parent)
         self.username = username

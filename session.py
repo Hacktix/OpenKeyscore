@@ -53,7 +53,7 @@ class KeyscoreSession():
                     if self.should_add_node(new_node) and not process_node.equals(new_node):
                         if new_node.parent is None:
                             new_node.parent = process_node
-                        logger.info(f"Found {new_node.__class__.__name__}: {new_node}")
+                        logger.info(f"Found {new_node._type_display_name}: {new_node}")
                         self.queued.append(new_node)
             self.processed.append(process_node)
         return self.processed

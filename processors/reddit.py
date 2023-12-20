@@ -4,6 +4,8 @@ from datetime import datetime
 import requests
 
 class RedditAccount(NodeBase):
+    _type_display_name = "Reddit Account"
+
     def __init__(self, username: str, display_name: str, url: str, created: int, parent: NodeBase = None) -> None:
         super().__init__(parent)
         self.username = username

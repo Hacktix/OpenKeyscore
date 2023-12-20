@@ -1,6 +1,8 @@
 from abc import ABC, abstractmethod
 
 class NodeBase(ABC):
+    _type_display_name = "Node Base"
+
     def __init__(self, parent: "NodeBase" = None) -> None:
         super().__init__()
         self.parent = parent
@@ -22,6 +24,8 @@ class NodeBase(ABC):
         pass
 
 class GenericText(NodeBase):
+    _type_display_name = "Generic Text"
+
     def __init__(self, text: str, parent: NodeBase = None) -> None:
         super().__init__(parent)
         self.text = text
@@ -33,6 +37,8 @@ class GenericText(NodeBase):
     def parse(*args): return GenericText(args[0])
 
 class Username(NodeBase):
+    _type_display_name = "Username"
+
     def __init__(self, username: str, parent: NodeBase = None) -> None:
         super().__init__(parent)
         self.username = username
@@ -44,6 +50,8 @@ class Username(NodeBase):
     def parse(*args): return Username(args[0])
 
 class RealName(NodeBase):
+    _type_display_name = "Real Name"
+
     def __init__(self, name: str, parent: NodeBase = None) -> None:
         super().__init__(parent)
         self.name = name
@@ -55,6 +63,8 @@ class RealName(NodeBase):
     def parse(*args): return RealName(args[0])
 
 class Email(NodeBase):
+    _type_display_name = "Email Address"
+
     def __init__(self, email: str, parent: NodeBase = None) -> None:
         super().__init__(parent)
         self.email = email
@@ -66,6 +76,8 @@ class Email(NodeBase):
     def parse(*args): return Email(args[0])
 
 class Website(NodeBase):
+    _type_display_name = "Website"
+
     def __init__(self, url: str, parent: NodeBase = None) -> None:
         super().__init__(parent)
         self.url = url

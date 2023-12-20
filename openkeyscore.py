@@ -36,16 +36,16 @@ if __name__ == "__main__":
         sys.exit(1)
 
     processed_nodes = session.process()
-    print(f"\nFound {len(processed_nodes)} nodes total:")
+    print(f"\nFound {len(processed_nodes)} node{'s' if len(processed_nodes) > 1 else ''} total:")
     for node in processed_nodes:
-        print(f"{node.__class__.__name__.rjust(15, ' ')}: {node}")
+        print(f"{node._type_display_name.rjust(15, ' ')}: {node}")
 
     if args.html:
         filename = args.html if args.html.endswith(".html") else f"{args.html}.html"
         net = Network(directed=True)
         idx = 0
         for node in processed_nodes:
-            net.add_node(idx, label=f"{node.__class__.__name__}\n{node}") # TODO: Figure out how to add metadata to this
+            net.add_node(idx, label=f"{node._type_display_name}\n{node}") # TODO: Figure out how to add metadata to this
             if node.parent is not None:
                 parent_idx = 0
                 while not node.parent.equals(processed_nodes[parent_idx]):

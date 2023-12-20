@@ -5,6 +5,8 @@ import requests
 from loguru import logger
 
 class DataBreach(NodeBase):
+    _type_display_name = "Data Breach"
+
     def __init__(self, name: str, parent: NodeBase = None) -> None:
         super().__init__(parent)
         self.name = name
