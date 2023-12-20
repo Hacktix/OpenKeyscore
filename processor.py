@@ -17,3 +17,10 @@ class ProcessorBase(ABC):
     @abstractmethod
     def process(self) -> list[NodeBase]:
         pass
+
+class SearchProcessorBase(ABC):
+    url_regexes = []
+
+    @abstractmethod
+    def get_nodes_from_search_result(url: str) -> list[NodeBase]:
+        pass

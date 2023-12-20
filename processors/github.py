@@ -1,6 +1,7 @@
 from nodes import Email, NodeBase, RealName, Username, Website
-from processor import ProcessorBase
+from processor import ProcessorBase, SearchProcessorBase
 import requests
+import re
 
 class GithubAccount(NodeBase):
     _type_display_name = "GitHub Account"
@@ -48,6 +49,14 @@ class GithubProcessor(ProcessorBase):
     def _send_request(path: str):
         return requests.get(f"https://api.github.com/{path}")
     
+class GithubSearchProcessor(SearchProcessorBase):
+    url_regexes = [r"https?:\/\/(?:www\.)?github\.com\/(\w+)\/?.*"]
+
+    def get_nodes_from_search_result(url: str):
+        username = re.match(GithubSearchProcessor.url_regexes[0], url)
+        username_node = Username(username.group(1))
+        return GithubProcessor(username_node).process()
+
 
 
 class GithubUserProcessor(ProcessorBase):
