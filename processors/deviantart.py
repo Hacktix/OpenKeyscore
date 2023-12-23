@@ -1,4 +1,5 @@
 from loguru import logger
+from requests import HTTPError, TooManyRedirects
 from nodes import NodeBase, Username
 from processor import ProcessorBase, SearchProcessorBase
 import re
@@ -29,6 +30,7 @@ class DeviantArtProcessor(ProcessorBase):
         try:
             user_url = f"https://deviantart.com/{username}"
             user_bs = get_bs_for_url(user_url)
+
             username = list(user_bs.find("h1", class_="_38K3K").children)[0]["data-username"]
             display_name_node = user_bs.find("div", class_="_33syq")
             display_name = None if display_name_node is None else display_name_node.get_text()
@@ -36,9 +38,15 @@ class DeviantArtProcessor(ProcessorBase):
             location = None if location_node is None else location_node.get_text()
             user_node = DeviantArtAccount(username, user_url, display_name, location)
             return [user_node]
-        except Exception as e:
-            logger.error(f"DeviantArt Lookup failed: {e}")
+        except TooManyRedirects: # This happens on 404s apparently
             return []
+        except HTTPError as e:
+            if e.response.status_code != 404:
+                logger.error(f"DeviantArt responded with Error Code {e.response.status_code}")
+        except Exception as e:
+            logger.error(f"DeviantArt Lookup failed: {type(e).__name__}: {e}")
+
+        return []
 
     def _get_queryable_username(self) -> str:
         match(self.node.__class__.__name__):
