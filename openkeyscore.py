@@ -38,7 +38,7 @@ if __name__ == "__main__":
     processed_nodes = session.process()
     print(f"\nFound {len(processed_nodes)} node{'s' if len(processed_nodes) > 1 else ''} total:")
     for node in processed_nodes:
-        print(f"{node._type_display_name.rjust(15, ' ')}: {node}")
+        print(f"{node._type_display_name.rjust(25, ' ')}: {node}")
 
     if args.html:
         filename = args.html if args.html.endswith(".html") else f"{args.html}.html"
