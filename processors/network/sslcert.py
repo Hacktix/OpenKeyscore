@@ -6,7 +6,7 @@ from nodes import Email, NodeBase, Website
 from processor import ProcessorBase
 from cryptography import x509
 from cryptography.x509.oid import ExtensionOID, NameOID
-from util.domain_util import is_excluded_domain
+from util.domain_util import is_excluded_domain, is_excluded_email_domain
 import ssl
 
 class SSLCertProcessor(ProcessorBase):
@@ -15,7 +15,7 @@ class SSLCertProcessor(ProcessorBase):
     def process(self) -> list[NodeBase]:
         nodes = []
         domain = self._get_domain()
-        if is_excluded_domain(domain):
+        if is_excluded_domain(domain) or is_excluded_email_domain(domain):
             return []
 
         try:
