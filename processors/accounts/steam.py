@@ -20,7 +20,7 @@ class SteamAccount(NodeBase):
     def __init__(self, parent: NodeBase = None) -> None:
         super().__init__(parent)
 
-    def equals(self, other: NodeBase): return self.id == other.id if type(other) == SteamAccount else False
+    def equals(self, other: NodeBase): return (self.id == other.id or self.name == other.name) if type(other) == SteamAccount else False
     def __repr__(self): return f"{self.name} ({self.display_name})" if self.name else f"{self.display_name}"
 
     @staticmethod
