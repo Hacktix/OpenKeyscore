@@ -1,6 +1,6 @@
 from loguru import logger
 from requests import HTTPError
-from nodes import Email, GenericText, NodeBase, RealName, Username, Website
+from nodes import Email, GenericText, Location, NodeBase, RealName, Username, Website
 from processor import ProcessorBase, SearchProcessorBase
 import re
 from util.html_util import get_bs_for_url
@@ -66,5 +66,6 @@ class FiverrUserProcessor(ProcessorBase):
         if user.display_name: nodes.append(Username(user.display_name))
         if user.username: nodes.append(Username(user.username))
         if user.bio: nodes.append(GenericText(user.bio))
+        if user.location: nodes.append(Location(user.location))
 
         return nodes

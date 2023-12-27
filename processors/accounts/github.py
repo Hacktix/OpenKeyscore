@@ -1,4 +1,4 @@
-from nodes import Email, NodeBase, RealName, Username, Website
+from nodes import Email, Location, NodeBase, RealName, Username, Website
 from processor import ProcessorBase, SearchProcessorBase
 import requests
 import re
@@ -68,6 +68,7 @@ class GithubUserProcessor(ProcessorBase):
         if user.email: nodes.append(Email(user.email, user))
         if user.website: nodes.append(Website(user.website, user))
         if user.display_name and " " in user.display_name: nodes.append(RealName(user.display_name, user))
+        if user.location: nodes.append(Location(user.location))
 
         return nodes
     

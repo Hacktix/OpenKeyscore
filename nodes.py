@@ -88,3 +88,16 @@ class Website(NodeBase):
 
     @staticmethod
     def parse(*args): return Website(args[0])
+
+class Location(NodeBase):
+    _type_display_name = "Location"
+
+    def __init__(self, location: str, parent: NodeBase = None) -> None:
+        super().__init__(parent)
+        self.location = location
+
+    def equals(self, other) -> bool: return self.location == other.location if type(other) == Location else False
+    def __repr__(self): return self.location
+
+    @staticmethod
+    def parse(*args): return Location(args[0])

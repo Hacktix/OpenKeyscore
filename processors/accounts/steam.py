@@ -1,5 +1,5 @@
 from config import KeyscoreConfig
-from nodes import GenericText, NodeBase, Username
+from nodes import GenericText, Location, NodeBase, Username
 from processor import ProcessorBase
 import requests
 from loguru import logger
@@ -103,5 +103,6 @@ class SteamUserProcessor(ProcessorBase):
 
         if user.display_name: nodes.append(Username(user.display_name))
         if user.bio: nodes.append(GenericText(user.bio))
+        if user.location: nodes.append(Location(user.location))
 
         return nodes
