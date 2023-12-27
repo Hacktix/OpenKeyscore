@@ -1,6 +1,6 @@
 from loguru import logger
 from requests import HTTPError, TooManyRedirects
-from nodes import NodeBase, Username
+from nodes import Location, NodeBase, Username
 from processor import ProcessorBase, SearchProcessorBase
 import re
 
@@ -59,3 +59,17 @@ class DeviantArtSearchProcessor(SearchProcessorBase):
         username = re.match(DeviantArtSearchProcessor.url_regexes[0], url)
         username_node = Username(username.group(1))
         return DeviantArtProcessor(username_node).process()
+
+
+
+class DeviantArtUserProcessor(ProcessorBase):
+    consumed_nodetypes = [DeviantArtAccount]
+    def process(self):
+        user: DeviantArtAccount = self.node
+        nodes = []
+
+        if user.username: nodes.append(Username(user.username))
+        if user.display_name: nodes.append(Username(user.display_name))
+        if user.location: nodes.append(Location(user.location))
+
+        return nodes
