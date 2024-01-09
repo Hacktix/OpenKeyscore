@@ -5,6 +5,7 @@ import requests
 from loguru import logger
 
 from util.html_util import get_bs_for_url
+from selenium.webdriver.common.by import By
 
 class SteamAccount(NodeBase):
     _type_display_name = "Steam Account"
@@ -16,6 +17,7 @@ class SteamAccount(NodeBase):
     avatar: str = None
     name: str = None
     location: str = None
+    aliases: list[str] = []
 
     def __init__(self, parent: NodeBase = None) -> None:
         super().__init__(parent)
@@ -42,7 +44,12 @@ class SteamProcessor(ProcessorBase):
         return [node]
     
     def _add_data_from_bs(username: str, node: SteamAccount) -> bool:
-        bs = get_bs_for_url(f"https://steamcommunity.com/id/{username}")
+        bs = get_bs_for_url(
+            f"https://steamcommunity.com/id/{username}",
+            load_check=lambda driver: len(driver.find_elements(By.CLASS_NAME, "actual_persona_name")) > 0 or len(driver.find_elements(By.CLASS_NAME, "error_ctn")) > 0,
+            post_load=lambda driver: driver.find_element(By.ID, "getnamehistory_arrow").click(),
+            ready_check=lambda driver: driver.find_element(By.ID, "NamePopupAliases") and not driver.find_element(By.ID, "NamePopupAliases").find_element(By.TAG_NAME, "img")
+        )
         node.id = username
         success = False
 
@@ -57,6 +64,12 @@ class SteamProcessor(ProcessorBase):
         if bs.find("div", class_="profile_summary"):
             node.bio = bs.find("div", class_="profile_summary").get_text().strip()
             success = True
+        if bs.find("div", id="NamePopupAliases"):
+            alias_elements = list(bs.find("div", id="NamePopupAliases").children)
+            aliases = list(map(lambda e: e.get_text(), alias_elements))
+            if "This user has no known aliases" in aliases:
+                aliases.remove("This user has no known aliases")
+            node.aliases = aliases
 
         return success
     
@@ -104,5 +117,8 @@ class SteamUserProcessor(ProcessorBase):
         if user.display_name: nodes.append(Username(user.display_name))
         if user.bio: nodes.append(GenericText(user.bio))
         if user.location: nodes.append(Location(user.location))
+
+        for alias in user.aliases:
+            nodes.append(Username(alias))
 
         return nodes
