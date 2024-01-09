@@ -18,6 +18,7 @@ if __name__ == "__main__":
     parser.add_argument("-d", "--depth", help="Maximum depth of nodes to analyze before stopping (default: 5)", type=int, default=5)
     parser.add_argument("--html", help="Name of the HTML output file, if one should be created", type=str)
     parser.add_argument("-l", "--log-level", help="Minimum log level which should be output. (default: INFO)", type=str)
+    parser.add_argument("--html-default-wait", help="Amount of seconds to wait, by default, when navigating to a website for screenscraping. (default: 1)", type=int, default=1)
 
     args = parser.parse_args()
     logger.remove()
