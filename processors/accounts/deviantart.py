@@ -32,10 +32,12 @@ class DeviantArtProcessor(ProcessorBase):
             user_url = f"https://deviantart.com/{username}"
             user_bs = get_bs_for_url(
                 user_url,
-                load_check=lambda driver: driver.find_element(By.CLASS_NAME, "user-link"),
+                load_check=lambda driver: len(driver.find_elements(By.CLASS_NAME, "user-link")) > 0 or len(driver.find_elements(By.CLASS_NAME, "error-404")) > 0,
                 post_load=lambda driver: driver.find_element(By.LINK_TEXT, "About").click(),
                 ready_check=lambda driver: driver.find_element(By.ID, "about")
             )
+            if user_bs.find("body", class_="error-404"):
+                return []
 
             username = list(user_bs.find("h1", class_="_38K3K").children)[0]["data-username"]
             display_name_node = user_bs.find("div", class_="_33syq")
