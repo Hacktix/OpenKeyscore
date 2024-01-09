@@ -4,6 +4,8 @@ from nodes import Location, NodeBase, Username
 from processor import ProcessorBase, SearchProcessorBase
 import re
 
+from selenium.webdriver import Chrome
+from selenium.webdriver.common.by import By
 from util.html_util import get_bs_for_url
 
 class DeviantArtAccount(NodeBase):
@@ -29,7 +31,12 @@ class DeviantArtProcessor(ProcessorBase):
         username = self._get_queryable_username()
         try:
             user_url = f"https://deviantart.com/{username}"
-            user_bs = get_bs_for_url(user_url)
+            user_bs = get_bs_for_url(
+                user_url,
+                load_check=lambda driver: driver.find_element(By.CLASS_NAME, "user-link"),
+                post_load=lambda driver: driver.find_element(By.LINK_TEXT, "About").click(),
+                ready_check=lambda driver: driver.find_element(By.ID, "about")
+            )
 
             username = list(user_bs.find("h1", class_="_38K3K").children)[0]["data-username"]
             display_name_node = user_bs.find("div", class_="_33syq")
