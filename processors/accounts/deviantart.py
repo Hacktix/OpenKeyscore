@@ -4,7 +4,6 @@ from nodes import Location, NodeBase, Username
 from processor import ProcessorBase, SearchProcessorBase
 import re
 
-from selenium.webdriver import Chrome
 from selenium.webdriver.common.by import By
 from util.html_util import get_bs_for_url
 
