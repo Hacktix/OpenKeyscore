@@ -1,5 +1,6 @@
 from typing import Callable
 from selenium import webdriver
+from selenium.common.exceptions import WebDriverException
 from bs4 import BeautifulSoup
 from config import KeyscoreConfig
 from loguru import logger
@@ -13,6 +14,8 @@ _CHROME_DRIVER_OPTIONS.add_argument("--headless")
 _CHROME_DRIVER = webdriver.Chrome(options=_CHROME_DRIVER_OPTIONS)
 logger.info("Selenium Driver initialized.")
 
+_MAX_CHECK_LOOP_ITER = 5
+
 def get_bs_for_url(
         url: str,
         load_check: Callable[[webdriver.Chrome], bool] = None,
@@ -24,8 +27,16 @@ def get_bs_for_url(
 
     # Check if the site has initially loaded
     if load_check is not None:
-        while(load_check(_CHROME_DRIVER) == False):
-            time.sleep(KeyscoreConfig.get("html_default_wait"))
+        loaded = False
+        load_attempts = 0
+        while loaded == False:
+            try:
+                loaded = load_check(_CHROME_DRIVER)
+            except WebDriverException as e:
+                load_attempts = load_attempts + 1
+                if load_attempts == _MAX_CHECK_LOOP_ITER:
+                    raise e
+                time.sleep(KeyscoreConfig.get("html_default_wait"))
     
     # Perform actions on website as defined by caller
     if post_load is not None:
@@ -33,8 +44,16 @@ def get_bs_for_url(
 
     # Check if site has loaded stuff caused by actions before
     if ready_check is not None:
-        while(ready_check(_CHROME_DRIVER) == False):
-            time.sleep(KeyscoreConfig.get("html_default_wait"))
+        ready = False
+        ready_attempts = 0
+        while ready == False:
+            try:
+                ready = ready_check(_CHROME_DRIVER)
+            except WebDriverException as e:
+                ready_attempts = ready_attempts + 1
+                if ready_attempts == _MAX_CHECK_LOOP_ITER:
+                    raise e
+                time.sleep(KeyscoreConfig.get("html_default_wait"))
     
     page_src = _CHROME_DRIVER.page_source
     return BeautifulSoup(page_src, 'lxml')
