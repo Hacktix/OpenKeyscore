@@ -11,6 +11,8 @@ _CHROME_DRIVER_OPTIONS = webdriver.ChromeOptions()
 _CHROME_DRIVER_OPTIONS.add_argument("--ignore-certificate-errors")
 _CHROME_DRIVER_OPTIONS.add_argument("--incognito")
 _CHROME_DRIVER_OPTIONS.add_argument("--headless")
+_CHROME_DRIVER_OPTIONS.add_argument("--disable-dev-shm-usage")
+_CHROME_DRIVER_OPTIONS.add_argument("--no-sandbox")
 _CHROME_DRIVER = webdriver.Chrome(options=_CHROME_DRIVER_OPTIONS)
 logger.info("Selenium Driver initialized.")
 
