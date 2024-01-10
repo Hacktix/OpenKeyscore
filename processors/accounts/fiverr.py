@@ -3,6 +3,7 @@ from requests import HTTPError
 from nodes import Email, GenericText, Location, NodeBase, RealName, Username, Website
 from processor import ProcessorBase, SearchProcessorBase
 import re
+from selenium.webdriver.common.by import By
 from util.html_util import get_bs_for_url
 
 class FiverrAccount(NodeBase):
@@ -27,11 +28,19 @@ class FiverrProcessor(ProcessorBase):
     def process(self) -> list[NodeBase]:
         username = self._get_queryable_username()
         try:
-            bs = get_bs_for_url(f"https://fiverr.com/{username.lower()}")
+            bs = get_bs_for_url(
+                f"https://fiverr.com/{username.lower()}",
+                load_check=lambda driver: len(driver.find_elements(By.CLASS_NAME, "HIEH1Ol")) > 0 or len(driver.find_elements(By.CLASS_NAME, "not-found-page")) > 0 or len(driver.find_elements(By.ID, "px-captcha")) > 0,
+                post_load=lambda driver: driver.find_element(By.CLASS_NAME, "HIEH1Ol").click(),
+                ready_check=lambda driver: driver.find_element(By.CLASS_NAME, "dsboZim")
+            )
+            if bs.find("div", id="px-captcha"):
+                raise Exception("Site prompted for captcha")
+
             display_name = bs.find("h1", class_="co-text-darkest").get_text() if bs.find("h1", class_="co-text-darkest") else None
             username = bs.find("div", class_="bD8FFIr").get_text()[1:] if bs.find("div", class_="bD8FFIr") else None
             location = bs.find_all("span", class_="m-l-8")[1].get_text() if bs.find_all("span", class_="m-l-8") else None
-            bio = bs.find("div", class_="_wDx25R").get_text().strip() if bs.find("div", class_="_wDx25R") else None
+            bio = bs.find("div", class_="vxWK_SR").get_text().strip() if bs.find("div", class_="vxWK_SR") else None
             
             account_node = FiverrAccount(username, display_name, bio, location)
             return [account_node]
