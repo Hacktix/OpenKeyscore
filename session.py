@@ -33,6 +33,7 @@ class KeyscoreSession():
         return KeyscoreSession(nodes)
     
     def process(self):
+        processor_whitelist = KeyscoreConfig.get("only_processors")
         while len(self.queued) > 0:
             process_node = self.queued.pop(0)
             if process_node.get_depth() >= KeyscoreConfig.get("depth"):
@@ -46,6 +47,10 @@ class KeyscoreSession():
             logger.debug(f"Processing node of type {process_node.__class__.__name__}: {process_node}")
             processors = KeyscoreSession._processor_consume_map[type(process_node)]
             for pclass in processors:
+                # Handling for --only-processors argument
+                if len(processor_whitelist) > 0 and pclass.__name__ not in processor_whitelist:
+                    continue
+
                 processor: ProcessorBase = pclass(process_node)
                 logger.debug(f"Fetching new nodes from processor {processor.__class__.__name__}")
                 new_nodes = processor.process() or []
