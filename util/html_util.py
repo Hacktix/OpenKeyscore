@@ -35,10 +35,12 @@ def get_bs_for_url(
             try:
                 loaded = load_check(_CHROME_DRIVER)
             except WebDriverException as e:
+                time.sleep(KeyscoreConfig.get("html_default_wait"))
+            finally:
                 load_attempts = load_attempts + 1
                 if load_attempts == _MAX_CHECK_LOOP_ITER:
-                    raise e
-                time.sleep(KeyscoreConfig.get("html_default_wait"))
+                    print(_CHROME_DRIVER.page_source)
+                    raise Exception(f"Load Check failed {load_attempts} times")
     
     # Perform actions on website as defined by caller
     if post_load is not None:
@@ -52,10 +54,11 @@ def get_bs_for_url(
                     try:
                         ready = ready_check(_CHROME_DRIVER)
                     except WebDriverException as e:
+                        time.sleep(KeyscoreConfig.get("html_default_wait"))
+                    finally:
                         ready_attempts = ready_attempts + 1
                         if ready_attempts == _MAX_CHECK_LOOP_ITER:
-                            raise e
-                        time.sleep(KeyscoreConfig.get("html_default_wait"))
+                            raise Exception(f"Ready Check failed {ready_attempts} times")
         except WebDriverException as e:
             pass
     
