@@ -44,7 +44,6 @@ class KeyscoreSession():
                 self.processed.append(process_node)
                 continue
 
-            logger.debug(f"Processing node of type {process_node.__class__.__name__}: {process_node}")
             processors = KeyscoreSession._processor_consume_map[type(process_node)]
             for pclass in processors:
                 # Handling for --only-processors argument
@@ -52,7 +51,7 @@ class KeyscoreSession():
                     continue
 
                 processor: ProcessorBase = pclass(process_node)
-                logger.debug(f"Fetching new nodes from processor {processor.__class__.__name__}")
+                logger.info(f"Processing {process_node.__class__.__name__} {process_node} with {processor.__class__.__name__}")
                 new_nodes = processor.process() or []
                 for new_node in new_nodes:
                     if self.should_add_node(new_node) and not process_node.equals(new_node):
