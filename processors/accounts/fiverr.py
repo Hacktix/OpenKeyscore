@@ -24,8 +24,12 @@ class FiverrAccount(NodeBase):
 
 class FiverrProcessor(ProcessorBase):
     consumed_nodetypes = [Username]
+    captcha_block = False
 
     def process(self) -> list[NodeBase]:
+        if FiverrProcessor.captcha_block:
+            return []
+        
         username = self._get_queryable_username()
         try:
             bs = get_bs_for_url(
@@ -35,6 +39,7 @@ class FiverrProcessor(ProcessorBase):
                 ready_check=lambda driver: driver.find_element(By.CLASS_NAME, "dsboZim")
             )
             if bs.find("div", id="px-captcha"):
+                FiverrProcessor.captcha_block = True
                 raise Exception("Site prompted for captcha")
 
             display_name = bs.find("h1", class_="co-text-darkest").get_text() if bs.find("h1", class_="co-text-darkest") else None
