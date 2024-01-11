@@ -1,6 +1,6 @@
 from loguru import logger
 from requests import HTTPError
-from nodes import Email, GenericText, Location, NodeBase, RealName, Username, Website
+from nodes import GenericText, Location, NodeBase, Username
 from processor import ProcessorBase, SearchProcessorBase
 import re
 from selenium.webdriver.common.by import By
