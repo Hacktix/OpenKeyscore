@@ -1,8 +1,6 @@
-from config import KeyscoreConfig
 from nodes import GenericText, Location, NodeBase, Username
 from processor import ProcessorBase
 import requests
-from loguru import logger
 
 from util.html_util import get_bs_for_url
 from selenium.webdriver.common.by import By
@@ -31,15 +29,12 @@ class SteamAccount(NodeBase):
 class SteamProcessor(ProcessorBase):
     consumed_nodetypes = [Username]
 
-    _showed_no_apikey_warning = False
-
     def process(self) -> list[NodeBase]:
         node = SteamAccount()
         username = self._get_queryable_username()
-        api_success = SteamProcessor._add_data_from_api(username, node)
-        bs_success = SteamProcessor._add_data_from_bs(username, node)
+        success = SteamProcessor._add_data_from_bs(username, node)
 
-        if not api_success and not bs_success:
+        if not success:
             return []
         return [node]
     
@@ -48,7 +43,7 @@ class SteamProcessor(ProcessorBase):
             f"https://steamcommunity.com/id/{username}",
             load_check=lambda driver: len(driver.find_elements(By.CLASS_NAME, "actual_persona_name")) > 0 or len(driver.find_elements(By.CLASS_NAME, "error_ctn")) > 0,
             post_load=lambda driver: driver.find_element(By.ID, "getnamehistory_arrow").click(),
-            ready_check=lambda driver: driver.find_element(By.ID, "NamePopupAliases") and not driver.find_element(By.ID, "NamePopupAliases").find_element(By.TAG_NAME, "img")
+            ready_check=lambda driver: driver.find_element(By.ID, "NamePopupAliases") and len(driver.find_elements(By.CSS_SELECTOR, ".NamePopupAliases > img")) == 0
         )
         node.id = username
         success = False
@@ -72,32 +67,6 @@ class SteamProcessor(ProcessorBase):
             node.aliases = aliases
 
         return success
-    
-    def _add_data_from_api(username: str, node: SteamAccount) -> bool:
-        api_key = KeyscoreConfig.get("steam_api_key")
-        if not api_key:
-            if not SteamProcessor._showed_no_apikey_warning:
-                SteamProcessor._showed_no_apikey_warning = True
-                logger.warning("WARNING: steam_api_key Environment Variable not set. Steam Web API cannot be used")
-            return False
-        
-        id_lookup_res = SteamProcessor._send_request(f"ISteamUser/ResolveVanityURL/v0001/?key={api_key}&vanityurl={username}")
-        if id_lookup_res.status_code == 403:
-            logger.error("Invalid steam_api_key provided")
-            return False
-        
-        id_res = id_lookup_res.json()["response"]
-        if id_res["success"] != 1:
-            return False
-        
-        steam_id = id_res["steamid"]
-        profile = SteamProcessor._send_request(f"ISteamUser/GetPlayerSummaries/v0002/?key={api_key}&steamids={steam_id}").json()["response"]["players"][0]
-        node.id = steam_id
-        node.display_name = profile.get("personaname")
-        node.url = profile.get("profileurl")
-        node.avatar = profile.get("avatarfull")
-        node.name = profile.get("realname")
-        return True
 
     def _get_queryable_username(self) -> str:
         match(self.node.__class__.__name__):
