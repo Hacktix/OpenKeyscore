@@ -34,12 +34,12 @@ def get_bs_for_url(
         while loaded == False:
             try:
                 loaded = load_check(_CHROME_DRIVER)
-            except WebDriverException as e:
-                time.sleep(KeyscoreConfig.get("html_default_wait"))
+            except WebDriverException:
+                pass
             finally:
+                time.sleep(KeyscoreConfig.get("html_default_wait"))
                 load_attempts = load_attempts + 1
                 if load_attempts == _MAX_CHECK_LOOP_ITER:
-                    print(_CHROME_DRIVER.page_source)
                     raise Exception(f"Load Check failed {load_attempts} times")
     
     # Perform actions on website as defined by caller
@@ -53,13 +53,14 @@ def get_bs_for_url(
                 while ready == False:
                     try:
                         ready = ready_check(_CHROME_DRIVER)
-                    except WebDriverException as e:
-                        time.sleep(KeyscoreConfig.get("html_default_wait"))
+                    except WebDriverException:
+                        pass
                     finally:
+                        time.sleep(KeyscoreConfig.get("html_default_wait"))
                         ready_attempts = ready_attempts + 1
                         if ready_attempts == _MAX_CHECK_LOOP_ITER:
                             raise Exception(f"Ready Check failed {ready_attempts} times")
-        except WebDriverException as e:
+        except WebDriverException:
             pass
     
     page_src = _CHROME_DRIVER.page_source
