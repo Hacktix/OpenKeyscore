@@ -1,6 +1,7 @@
 from processors.accounts import *
 from processors.misc import *
 from processors.network import *
+from processors.searchengine import *
 
 from os.path import dirname, basename, isfile, join
 import glob
