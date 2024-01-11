@@ -26,7 +26,8 @@ if __name__ == "__main__":
     logger.add(sys.stderr, level=args.log_level if args.log_level else "INFO")
 
     KeyscoreConfig._load_config_from_args(args)
-    KeyscoreConfig.set("only_processors", f"{KeyscoreConfig.get('only_processors')}".split(","))
+    if KeyscoreConfig.get("only_processors") != "":
+        KeyscoreConfig.set("only_processors", f"{KeyscoreConfig.get('only_processors')}".split(","))
 
     try:
         ksdpath = args.ksdfile
