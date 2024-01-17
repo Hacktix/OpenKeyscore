@@ -2,21 +2,25 @@ from abc import ABC, abstractmethod
 
 class NodeBase(ABC):
     _type_display_name = "Node Base"
+    """A string representing a human-readable name for the type of node."""
 
     def __init__(self, parent: "NodeBase" = None) -> None:
         super().__init__()
         self.parent = parent
 
     def get_depth(self) -> int:
+        """Returns an integer representing the amount of nodes that were processed before to lead to this node."""
         return 0 if self.parent is None else self.parent.get_depth() + 1
 
     @abstractmethod
     def equals(self, other) -> bool:
+        """Returns True if the given node is equal to this node, False otherwise."""
         pass
 
     @staticmethod
     @abstractmethod
     def parse(*args):
+        """Returns a new instance of the node based on the given arguments."""
         pass
 
     @abstractmethod

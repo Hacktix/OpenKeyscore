@@ -17,6 +17,7 @@ class KeyscoreSession():
 
     @staticmethod
     def from_ksd(path: str):
+        """Creates a new KeyscoreSession instance using input data from a provided KSD file."""
         nodes = []
         with open(path, "r") as f:
             lines = f.readlines()
@@ -33,6 +34,7 @@ class KeyscoreSession():
         return KeyscoreSession(nodes)
     
     def process(self):
+        """Processes the input data the session was initialized with and returns a list of all resulting nodes."""
         processor_whitelist = KeyscoreConfig.get("only_processors")
         while len(self.queued) > 0:
             process_node = self.queued.pop(0)
@@ -63,6 +65,7 @@ class KeyscoreSession():
         return self.processed
     
     def should_add_node(self, node: NodeBase):
+        """Returns False if the provided node is already known within the context of the session, True otherwise"""
         for processed in self.processed:
             if node.equals(processed):
                 return False
