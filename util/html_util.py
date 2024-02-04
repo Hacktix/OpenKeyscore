@@ -5,18 +5,20 @@ from bs4 import BeautifulSoup
 from config import KeyscoreConfig
 from loguru import logger
 import time
+import sys
 
-logger.info("Initializing Selenium Driver...")
-_CHROME_DRIVER_OPTIONS = webdriver.ChromeOptions()
-_CHROME_DRIVER_OPTIONS.add_argument("--ignore-certificate-errors")
-_CHROME_DRIVER_OPTIONS.add_argument("--incognito")
-_CHROME_DRIVER_OPTIONS.add_argument("--headless")
-_CHROME_DRIVER_OPTIONS.add_argument("--disable-dev-shm-usage")
-_CHROME_DRIVER_OPTIONS.add_argument("--no-sandbox")
-_CHROME_DRIVER = webdriver.Chrome(options=_CHROME_DRIVER_OPTIONS)
-logger.info("Selenium Driver initialized.")
+if "-h" not in sys.argv and "--help" not in sys.argv:
+    logger.info("Initializing Selenium Driver...")
+    _CHROME_DRIVER_OPTIONS = webdriver.ChromeOptions()
+    _CHROME_DRIVER_OPTIONS.add_argument("--ignore-certificate-errors")
+    _CHROME_DRIVER_OPTIONS.add_argument("--incognito")
+    _CHROME_DRIVER_OPTIONS.add_argument("--headless")
+    _CHROME_DRIVER_OPTIONS.add_argument("--disable-dev-shm-usage")
+    _CHROME_DRIVER_OPTIONS.add_argument("--no-sandbox")
+    _CHROME_DRIVER = webdriver.Chrome(options=_CHROME_DRIVER_OPTIONS)
+    logger.info("Selenium Driver initialized.")
 
-_MAX_CHECK_LOOP_ITER = 5
+    _MAX_CHECK_LOOP_ITER = 5
 
 def get_bs_for_url(
         url: str,
