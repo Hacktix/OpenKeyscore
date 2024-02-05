@@ -29,10 +29,10 @@ class NPMProcessor(ProcessorBase):
             load_check=lambda driver: len(driver.find_elements(By.CLASS_NAME, "b219ea1a")) > 0 or len(driver.find_elements(By.CLASS_NAME, "mw6-ns")) > 0
         )
         
-        if bs.find("img", class_="mw6-ns"):
+        if "Profile" not in bs.find("title").string:
             return []
         
-        display_name = bs.find("div", class_="mv2").get_text()
+        display_name = bs.find("div", class_="mv2").get_text() if bs.find("div", class_="mv2") else None
         user_node = NPMAccount(username, display_name)
         return [user_node]
 
