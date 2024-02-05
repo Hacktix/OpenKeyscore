@@ -14,8 +14,8 @@ class GoogleProcessor(ProcessorBase):
             nodes = []
             for result in results:
                 processor = get_search_result_processor(result)
-                logger.debug(f"Processing search result {result.url} with {processor.__class__.__name__}")
                 if processor:
+                    logger.debug(f"Processing search result {result} with {processor.__name__}")
                     nodes = nodes + processor.get_nodes_from_search_result(result)
             return nodes
         except Exception as e:
