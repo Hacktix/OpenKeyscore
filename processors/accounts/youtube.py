@@ -64,7 +64,7 @@ class YoutubeProcessor(ProcessorBase):
                 return []
 
             display_name = bs.find("yt-formatted-string", class_="ytd-channel-name").get_text()
-            username = bs.find("yt-formatted-string", id="channel-handle").get_text()
+            username = bs.find("yt-formatted-string", id="channel-handle").get_text()[1:]
             location = None # TODO: Figure out how to extract this properly
             bio = bs.find("yt-attributed-string", id="description-container").get_text()
             links = [] # TODO: Figure out how to extract this properly
